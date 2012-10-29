@@ -19,6 +19,7 @@ namespace GlueContentSecurity
     [Export(typeof(PluginBase))]
     public class Plugin : PluginBase
     {
+        private TabControl _tabContainer;
         private PluginTab _tab;
         private MainControl _control;
 
@@ -60,6 +61,7 @@ namespace GlueContentSecurity
         {
             InitializeCenterTabHandler = InitializeTab;
             AdjustDisplayedReferencedFile = AdjustDisplayedReferencedFileHandler;
+            ReactToLoadedGlux = ProjectLoadedHandler;
         }
 
         public override Version Version
@@ -69,19 +71,13 @@ namespace GlueContentSecurity
 
         private void InitializeTab(TabControl tabControl)
         {
-            string location = ProjectManager.ProjectRootDirectory;
-            string contentDir = ProjectManager.ContentDirectory;
-
-            _tab = new PluginTab();
-            _tab.Text = "Content Security";
-            _control = new MainControl(location, contentDir);
-            _tab.Controls.Add(_control);
-            tabControl.Controls.Add(_tab);
+            // Store the tab container for later use
+            _tabContainer = tabControl;
         }
 
         private void AdjustDisplayedReferencedFileHandler(ReferencedFileSave referencedFileSave, ReferencedFileSavePropertyGridDisplayer displayer)
         {
-            string refName = referencedFileSave.GetRelativePath() + referencedFileSave.Name;
+            string refName = referencedFileSave.Name;
 
             Func<object> getter = () => 
             { 
@@ -100,6 +96,17 @@ namespace GlueContentSecurity
             };
 
             displayer.IncludeMember("Secure Content", typeof(bool), setter, getter, null, null);
+        }
+
+        private void ProjectLoadedHandler()
+        {
+            string contentDir = ProjectManager.ContentDirectory;
+
+            _tab = new PluginTab();
+            _tab.Text = "Content Security";
+            _control = new MainControl(contentDir);
+            _tab.Controls.Add(_control);
+            _tabContainer.Controls.Add(_tab);
         }
     }
 }

@@ -11,24 +11,19 @@ using System.Xml.Linq;
 using System.IO;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+using FlatRedBall.Glue;
 
 namespace GlueContentSecurity.Controls
 {
     public partial class MainControl : UserControl
     {
-        private string _projectDirectory;
         private string _projectContentDirectory;
 
-        public MainControl(string projectDirectory, string projectContentDirectory)
+        public MainControl(string projectContentDirectory)
         {
             InitializeComponent();
 
-            _projectDirectory = projectDirectory;
             _projectContentDirectory = projectContentDirectory;
-
-            if (!_projectDirectory.EndsWith("\\"))
-                _projectDirectory += "\\";
-
             if (!_projectContentDirectory.EndsWith("\\"))
                 _projectContentDirectory += "\\";
         }
@@ -62,6 +57,7 @@ namespace GlueContentSecurity.Controls
         {
             this.Dock = DockStyle.Fill;
             lstSecuredFiles.Sorted = true;
+            btnGenerateKeys_Click(null, null);
         }
 
         private void btnGenerateKeys_Click(object sender, EventArgs e)
@@ -83,7 +79,7 @@ namespace GlueContentSecurity.Controls
                 root.Add(
                     new XElement("File",
                         new XAttribute("Path", file),
-                        new XAttribute("Hash", ComputeMd5Hash(_projectDirectory + file))
+                        new XAttribute("Hash", ComputeMd5Hash(_projectContentDirectory + file))
                     )
                 );
             }
