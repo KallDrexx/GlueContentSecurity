@@ -17,15 +17,15 @@ namespace GlueContentSecurity.Controls
 {
     public partial class MainControl : UserControl
     {
+        private string _projectDirectory;
         private string _projectContentDirectory;
 
-        public MainControl(string projectContentDirectory)
+        public MainControl()
         {
             InitializeComponent();
 
-            _projectContentDirectory = projectContentDirectory;
-            if (!_projectContentDirectory.EndsWith("\\"))
-                _projectContentDirectory += "\\";
+            _projectDirectory = ProjectManager.ProjectRootDirectory + "\\";
+            _projectContentDirectory = ProjectManager.ContentDirectory + "\\";
         }
 
         public bool CheckIfFileSecured(string name)
@@ -42,7 +42,7 @@ namespace GlueContentSecurity.Controls
             if (!CheckIfFileSecured(name))
                 lstSecuredFiles.Items.Add(name);
 
-            GenerateFileHashXml();
+            UpdateSavedInfo();
         }
 
         public void RemoveReferencedFile(string name)
@@ -50,14 +50,13 @@ namespace GlueContentSecurity.Controls
             if (CheckIfFileSecured(name))
                 lstSecuredFiles.Items.Remove(name);
 
-            GenerateFileHashXml();
+            UpdateSavedInfo();
         }
 
         private void MainControl_Load(object sender, EventArgs e)
         {
             this.Dock = DockStyle.Fill;
             lstSecuredFiles.Sorted = true;
-            btnGenerateKeys_Click(null, null);
         }
 
         private void btnGenerateKeys_Click(object sender, EventArgs e)
@@ -66,6 +65,22 @@ namespace GlueContentSecurity.Controls
             {
                 txtPublicKey.Text = key.ToXmlString(true);
             }
+
+            UpdateSavedInfo();
+        }
+
+        private void UpdateSavedInfo()
+        {
+            GeneratePrivateKeyStore();
+            GenerateFileHashXml();
+        }
+
+        private void GeneratePrivateKeyStore()
+        {
+            var xml = new XDocument(
+                        new XElement("KeyInfo",
+                            new XElement("KeyXml", txtPublicKey.Text)));
+            xml.Save(_projectDirectory + "contentKey.xml");
         }
 
         private void GenerateFileHashXml()

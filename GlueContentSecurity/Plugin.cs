@@ -100,11 +100,9 @@ namespace GlueContentSecurity
 
         private void ProjectLoadedHandler()
         {
-            string contentDir = ProjectManager.ContentDirectory;
-
             _tab = new PluginTab();
             _tab.Text = "Content Security";
-            _control = new MainControl(contentDir);
+            _control = new MainControl();
             _tab.Controls.Add(_control);
             _tabContainer.Controls.Add(_tab);
         }
