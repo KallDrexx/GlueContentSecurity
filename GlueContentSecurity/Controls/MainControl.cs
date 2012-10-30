@@ -17,6 +17,9 @@ namespace GlueContentSecurity.Controls
 {
     public partial class MainControl : UserControl
     {
+        private const string CONTENT_HASH_XML_FILENAME = "contentHashes.xml";
+        private const string CONTENT_KEY_FILENAME = "contentKey.xml";
+
         private string _projectDirectory;
         private string _projectContentDirectory;
 
@@ -57,6 +60,8 @@ namespace GlueContentSecurity.Controls
         {
             this.Dock = DockStyle.Fill;
             lstSecuredFiles.Sorted = true;
+
+            LoadPreviousData();
         }
 
         private void btnGenerateKeys_Click(object sender, EventArgs e)
@@ -80,7 +85,7 @@ namespace GlueContentSecurity.Controls
             var xml = new XDocument(
                         new XElement("KeyInfo",
                             new XElement("KeyXml", txtPublicKey.Text)));
-            xml.Save(_projectDirectory + "contentKey.xml");
+            xml.Save(_projectDirectory + CONTENT_KEY_FILENAME);
         }
 
         private void GenerateFileHashXml()
@@ -125,7 +130,7 @@ namespace GlueContentSecurity.Controls
             }
 
             // Save the xml to a file
-            xmlDocument.Save(string.Concat(_projectContentDirectory, "contentHashes.xml"));
+            xmlDocument.Save(string.Concat(_projectContentDirectory, CONTENT_HASH_XML_FILENAME));
         }
 
         /// <summary>
@@ -164,6 +169,41 @@ namespace GlueContentSecurity.Controls
 
             //return the MD5 hash of the file
             return sb.ToString();
+        }
+
+        private void LoadPreviousData()
+        {
+            txtPublicKey.Text = string.Empty;
+            lstSecuredFiles.Items.Clear();
+
+            if (!File.Exists(_projectDirectory + CONTENT_KEY_FILENAME))
+            {
+                // Generate a new hash since one doesn't exist
+                btnGenerateKeys_Click(null, null);
+            }
+            else
+            {
+                // Load the key data
+                var xml = XDocument.Load(_projectDirectory + CONTENT_KEY_FILENAME);
+                txtPublicKey.Text = xml.Descendants("KeyXml").Select(x => x.Value).FirstOrDefault();
+            }
+
+            if (File.Exists(_projectContentDirectory + CONTENT_HASH_XML_FILENAME))
+            {
+                // Load the previously saved file hashes
+                var xml = XDocument.Load(_projectContentDirectory + CONTENT_HASH_XML_FILENAME);
+                foreach (var node in xml.Descendants("File"))
+                {
+                    var path = node.Attribute("Path");
+                    if (path != null)
+                    {
+                        lstSecuredFiles.Items.Add(path.Value);
+                    }
+                }
+            }
+
+            // Update all the saved files, in case any hashes changed
+            UpdateSavedInfo();
         }
     }
 }
