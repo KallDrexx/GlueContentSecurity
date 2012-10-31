@@ -68,6 +68,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientCode\ClientHashVerifier.cs" />
+    <Compile Include="ClientCode\ClientVerificationResult.cs" />
+    <Compile Include="ClientCode\GlueSecuritySignatureMismatchException.cs" />
     <Compile Include="Controls\MainControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
