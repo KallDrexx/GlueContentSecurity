@@ -12,6 +12,7 @@ using System.IO;
 using System.Security.Cryptography.Xml;
 using System.Xml;
 using FlatRedBall.Glue;
+using FlatRedBall.Glue.Plugins.ExportedInterfaces.CommandInterfaces;
 
 namespace GlueContentSecurity.Controls
 {
@@ -22,13 +23,15 @@ namespace GlueContentSecurity.Controls
 
         private string _projectDirectory;
         private string _projectContentDirectory;
+        private IProjectCommands _projectCommands;
 
-        public MainControl()
+        public MainControl(IProjectCommands projectCommands)
         {
             InitializeComponent();
 
             _projectDirectory = ProjectManager.ProjectRootDirectory + "\\";
             _projectContentDirectory = ProjectManager.ContentDirectory + "\\";
+            _projectCommands = projectCommands;
         }
 
         public bool CheckIfFileSecured(string name)
@@ -90,6 +93,10 @@ namespace GlueContentSecurity.Controls
 
         private void GenerateFileHashXml()
         {
+            // If no items are tracked, don't create the hash file
+            if (lstSecuredFiles.Items.Count == 0 && !File.Exists(_projectContentDirectory + CONTENT_HASH_XML_FILENAME))
+                return;                
+
             var xml = new XDocument();
             var root = new XElement("FileHashes");
 
@@ -130,7 +137,10 @@ namespace GlueContentSecurity.Controls
             }
 
             // Save the xml to a file
-            xmlDocument.Save(string.Concat(_projectContentDirectory, CONTENT_HASH_XML_FILENAME));
+            xmlDocument.Save(_projectContentDirectory + CONTENT_HASH_XML_FILENAME);
+
+            // Add it the content project
+            _projectCommands.AddContentFileToProject(_projectContentDirectory + CONTENT_HASH_XML_FILENAME);
         }
 
         /// <summary>

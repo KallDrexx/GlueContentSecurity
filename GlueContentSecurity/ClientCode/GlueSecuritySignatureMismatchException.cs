@@ -7,7 +7,7 @@ namespace GlueContentSecurity.ClientCode
 {
     public class GlueSecuritySignatureMismatchException : Exception
     {
-        public GlueSecuritySignatureMismatchException(IEnumerable<ClientVerificationResultType> results, bool signatureMismatch, bool hashFileNotFound)
+        public GlueSecuritySignatureMismatchException(IEnumerable<ClientVerificationResult> results, bool signatureMismatch, bool hashFileNotFound)
             : base("Content did not pass verification checks")
         {
             Results = results;
@@ -15,7 +15,7 @@ namespace GlueContentSecurity.ClientCode
             HashFileNotFound = hashFileNotFound;
         }
 
-        public IEnumerable<ClientVerificationResultType> Results { get; protected set; }
+        public IEnumerable<ClientVerificationResult> Results { get; protected set; }
         public bool SignatureMismatch { get; protected set; }
         public bool HashFileNotFound { get; protected set; }
     }

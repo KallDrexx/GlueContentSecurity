@@ -102,7 +102,7 @@ namespace GlueContentSecurity
         {
             _tab = new PluginTab();
             _tab.Text = "Content Security";
-            _control = new MainControl();
+            _control = new MainControl(GlueCommands.ProjectCommands);
             _tab.Controls.Add(_control);
             _tabContainer.Controls.Add(_tab);
         }

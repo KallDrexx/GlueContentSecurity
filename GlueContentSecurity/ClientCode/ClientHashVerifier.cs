@@ -18,12 +18,12 @@ namespace GlueContentSecurity.ClientCode
         /// <exception cref="GlueSecuritySignatureMismatchException">Thrown when verification fails any game content</exception>
         public void VerifyContent()
         {
-            const string XML_PUBLIC_KEY = "[publickeytoken]";
+            const string XML_PUBLIC_KEY = "[PublicKey]";
             const string CONTENT_XML_LOCATIONS = "\\Content\\contentHashes.xml";
 
             // Load the content hash xml
             var doc = new XmlDocument();
-            try { doc.Load(AppDomain.CurrentDomain + CONTENT_XML_LOCATIONS); }
+            try { doc.Load(AppDomain.CurrentDomain.BaseDirectory + CONTENT_XML_LOCATIONS); }
             catch (FileNotFoundException)
             {
                 throw new GlueSecuritySignatureMismatchException(null, false, true);
@@ -43,10 +43,42 @@ namespace GlueContentSecurity.ClientCode
             var xdoc = XDocument.Parse(doc.OuterXml);
 
             // Find all the file nodes
+            var mismatches = new List<ClientVerificationResult>();
             foreach (var node in xdoc.Descendants("File"))
             {
+                var pathAttr = node.Attribute("Path");
+                var hashAttr = node.Attribute("Hash");
+                if (pathAttr != null)
+                {
+                    try
+                    {
+                        string hash = ComputeMd5Hash(
+                            string.Concat(AppDomain.CurrentDomain.BaseDirectory, "\\Content\\", pathAttr.Value));
 
+                        if (hashAttr == null || hash != hashAttr.Value)
+                        {
+                            mismatches.Add(new ClientVerificationResult
+                            {
+                                FilePath = pathAttr.Value,
+                                ResultType = ClientVerificationResultType.IncorrectHash
+                            });
+
+                            continue;
+                        }
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        mismatches.Add(new ClientVerificationResult
+                        {
+                            FilePath = pathAttr.Value,
+                            ResultType = ClientVerificationResultType.FileMissing
+                        });
+                    }
+                }
             }
+
+            if (mismatches.Count > 0)
+                throw new GlueSecuritySignatureMismatchException(mismatches, false, false);
         }
 
         private string ComputeMd5Hash(string file)

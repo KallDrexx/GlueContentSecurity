@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GlueContentSecurity.ClientCode
 {
-    public enum ClientVerificationResultType { ValidMath, IncorrectHash, FileMissing };
+    public enum ClientVerificationResultType { ValidMatch, IncorrectHash, FileMissing };
 
     public class ClientVerificationResult
     {
