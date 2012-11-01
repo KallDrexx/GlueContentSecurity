@@ -100,6 +100,9 @@ namespace GlueContentSecurity
 
         private void ProjectLoadedHandler()
         {
+            if (_tab != null)
+                _tabContainer.Controls.Remove(_tab);
+
             _tab = new PluginTab();
             _tab.Text = "Content Security";
             _control = new MainControl(GlueCommands.ProjectCommands);
