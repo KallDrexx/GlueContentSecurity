@@ -33,7 +33,7 @@
             this.btnGenerateKeys = new System.Windows.Forms.Button();
             this.lstSecuredFiles = new System.Windows.Forms.ListBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnRemove = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -83,21 +83,22 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Tracked Files:";
             // 
-            // button2
+            // btnRemove
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(369, 59);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(101, 25);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Remove Selected";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRemove.Location = new System.Drawing.Point(369, 59);
+            this.btnRemove.Name = "btnRemove";
+            this.btnRemove.Size = new System.Drawing.Size(101, 25);
+            this.btnRemove.TabIndex = 7;
+            this.btnRemove.Text = "Remove Selected";
+            this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // MainControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lstSecuredFiles);
             this.Controls.Add(this.btnGenerateKeys);
@@ -118,6 +119,6 @@
         private System.Windows.Forms.Button btnGenerateKeys;
         private System.Windows.Forms.ListBox lstSecuredFiles;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnRemove;
     }
 }

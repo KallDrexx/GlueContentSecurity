@@ -92,6 +92,15 @@ namespace GlueContentSecurity.Controls
             UpdateSavedInfo();
         }
 
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (lstSecuredFiles.SelectedItem == null)
+                return;
+
+            lstSecuredFiles.Items.Remove(lstSecuredFiles.SelectedItem);
+            UpdateSavedInfo();
+        }
+
         private void UpdateSavedInfo()
         {
             GeneratePrivateKeyStore();
