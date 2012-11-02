@@ -13,6 +13,9 @@ using System.Security.Cryptography.Xml;
 using System.Xml;
 using FlatRedBall.Glue;
 using FlatRedBall.Glue.Plugins.ExportedInterfaces.CommandInterfaces;
+using FlatRedBall.Glue.VSHelpers.Projects;
+using System.Reflection;
+using FlatRedBall.IO;
 
 namespace GlueContentSecurity.Controls
 {
@@ -134,6 +137,9 @@ namespace GlueContentSecurity.Controls
                 xmlDocument.DocumentElement.AppendChild(xmlDocument.ImportNode(signature, true));
                 if (xmlDocument.FirstChild is XmlDeclaration)
                     xmlDocument.RemoveChild(xmlDocument.FirstChild);
+
+                // Make sure the client code is added to the project
+                LoadEmbeddedClientCode(key);
             }
 
             // Save the xml to a file
@@ -214,6 +220,33 @@ namespace GlueContentSecurity.Controls
 
             // Update all the saved files, in case any hashes changed
             UpdateSavedInfo();
+        }
+
+        private void LoadEmbeddedClientCode(RSACryptoServiceProvider key)
+        {
+            const string PROJECT_NAME = "GlueContentSecurity.ClientCode";
+            const string KEY_TOKEN = "[publicKeyToken]";
+            string[] codeFileNames = { "ClientHashVerifier.cs", "ClientVerificationResult.cs", "GlueSecuritySignatureMismatchException.cs" };
+
+            // Load the contents of the embedded files
+            var assembly = Assembly.GetExecutingAssembly();
+            foreach (string file in codeFileNames)
+            {
+                using (var stream = assembly.GetManifestResourceStream(string.Concat(PROJECT_NAME, ".", file)))
+                using (var reader = new StreamReader(stream))
+                {
+                    string contents = reader.ReadToEnd();
+                    contents = contents.Replace(KEY_TOKEN, key.ToXmlString(false));
+                    SaveClientCodeToProject(contents, file);
+                }
+            }
+        }
+
+        private void SaveClientCodeToProject(string contents, string filename)
+        {
+            string destinationDirectory = ProjectManager.ProjectBase.Directory + "/";
+            FileManager.SaveText(contents, destinationDirectory + filename);
+            ProjectManager.CodeProjectHelper.AddFileToCodeProjectIfNotAlreadyAdded(ProjectManager.ProjectBase, destinationDirectory + filename);
         }
     }
 }

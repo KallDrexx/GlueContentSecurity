@@ -18,7 +18,7 @@ namespace GlueContentSecurity.ClientCode
         /// <exception cref="GlueSecuritySignatureMismatchException">Thrown when verification fails any game content</exception>
         public void VerifyContent()
         {
-            const string XML_PUBLIC_KEY = "[PublicKey]";
+            const string XML_PUBLIC_KEY = "[publicKeyToken]";
             const string CONTENT_XML_LOCATIONS = "\\Content\\contentHashes.xml";
 
             // Load the content hash xml
