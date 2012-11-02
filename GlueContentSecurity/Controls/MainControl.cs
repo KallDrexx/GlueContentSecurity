@@ -244,7 +244,7 @@ namespace GlueContentSecurity.Controls
 
         private void SaveClientCodeToProject(string contents, string filename)
         {
-            string destinationDirectory = ProjectManager.ProjectBase.Directory + "/";
+            string destinationDirectory = ProjectManager.ProjectBase.Directory + "/GlueContentSecurity/";
             FileManager.SaveText(contents, destinationDirectory + filename);
             ProjectManager.CodeProjectHelper.AddFileToCodeProjectIfNotAlreadyAdded(ProjectManager.ProjectBase, destinationDirectory + filename);
         }
