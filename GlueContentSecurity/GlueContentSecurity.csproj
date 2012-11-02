@@ -71,7 +71,6 @@
     <EmbeddedResource Include="ClientCode\ClientHashVerifier.cs" />
     <EmbeddedResource Include="ClientCode\ClientVerificationResult.cs" />
     <EmbeddedResource Include="ClientCode\GlueSecuritySignatureMismatchException.cs" />
-    <Compile Include="CodeBuildItemAdder.cs" />
     <Compile Include="Controls\MainControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

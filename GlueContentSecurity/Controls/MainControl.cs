@@ -62,6 +62,18 @@ namespace GlueContentSecurity.Controls
             UpdateSavedInfo();
         }
 
+        public void ReactToFileChanged(string name)
+        {
+            foreach (string trackedFile in lstSecuredFiles.Items)
+            {
+                if (name.EndsWith(trackedFile))
+                {
+                    UpdateSavedInfo();
+                    return;
+                }
+            }
+        }
+
         private void MainControl_Load(object sender, EventArgs e)
         {
             this.Dock = DockStyle.Fill;

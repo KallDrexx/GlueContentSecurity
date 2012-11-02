@@ -62,6 +62,7 @@ namespace GlueContentSecurity
             InitializeCenterTabHandler = InitializeTab;
             AdjustDisplayedReferencedFile = AdjustDisplayedReferencedFileHandler;
             ReactToLoadedGlux = ProjectLoadedHandler;
+            ReactToFileChangeHandler = ReactToFileChange;
         }
 
         public override Version Version
@@ -108,6 +109,12 @@ namespace GlueContentSecurity
             _control = new MainControl(GlueCommands.ProjectCommands);
             _tab.Controls.Add(_control);
             _tabContainer.Controls.Add(_tab);
+        }
+
+        private void ReactToFileChange(string filename)
+        {
+            if (_control != null)
+                _control.ReactToFileChanged(filename);
         }
     }
 }
